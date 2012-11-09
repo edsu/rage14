@@ -6,7 +6,7 @@
             }
 
             #chart {
-                border: 3px solid #cccccc;
+                border: 2px solid #cccccc;
                 width: 800px;
                 margin-left: auto;
                 margin-right: auto;
@@ -21,9 +21,10 @@
             }
 
         </style>
+        <link rel="alternate" href="emails.rdf" type="application/rdf+xml"></link>
+        <link rel="alternate" href="emails.ttl" type="text/turtle"></link>
         <script src="http://d3js.org/d3.v2.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-        <script src="js/sigma.data.js"></script>
 
         <script>
             $(document).ready(init);
@@ -89,13 +90,15 @@
         <header><h1>httpRange-14 discussions</h1></header>
         <a href="http://github.com/edsu/rage14"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub" /></a> 
         <div id="about">
-            Below is visualization of emails that mention the phrase
-            httpRange-14 that appeared on the following w3c discussion 
+            Below is visualization of the email discussion around the 
+            topic of the infamous (in some circles) <a href="http://www.w3.org/2001/tag/group/track/issues/14">httpRange-14</a> decision
+            that appeared on the following w3c discussion 
             lists: public-awwsw, public-lod, public-rdf-wg, 
             public-swbp-wg, public-vocabs, semantic-web, 
             www-tag, public-swd-wg, public-sparql-dev. Each node is a 
             person (hover it to see the email address), and edges indicate
-            where there has been correspondence. If you want to see the 
+            where there has been correspondence. Blue nodes are people
+            from the w3c. If you want to see the 
             data that drives the app checkout the 
             <a href="emails.ttl">RDF serialization</a> or the <a
                 href="d3.json">JSON</a> that drives the <a
