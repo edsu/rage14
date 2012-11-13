@@ -25,10 +25,17 @@ def generate_rdf():
         g.add((u, nmo["from"], uri("mailto:" + msg["from"][1])))
         g.add((u, nmo.sentDate, rdflib.Literal(msg["date"])))
         g.add((u, nmo.messageSubject, rdflib.Literal(msg["subject"])))
+        g.add((u, nmo.messageId, rdflib.Literal(msg["message_id"])))
         for name, email in msg["to"]:
             g.add((u, nmo.to, uri("mailto:" + email)))
         for name, email in msg["cc"]:
             g.add((u, nmo.cc, uri("mailto:" + email)))
+        if msg["in_reply_to"]:
+            reply_to = msg["in_reply_to"].strip("<>")
+            reply_to = "http://www.w3.org/mid/" + reply_to
+            reply_to = rdflib.URIRef(reply_to)
+            g.add((u, nmo.inReplyTo, reply_to))
+
     g.serialize(open("emails.rdf", "w"))
     g.serialize(open("emails.ttl", "w"), format="turtle")
     g.close()
@@ -44,6 +51,8 @@ def get_message(msg):
     if not url: 
         url = msg['X-Archived-At']
     url = url.strip("<>")
+    message_id = msg['Message-ID']
+    in_reply_to = msg.get('In-Reply-To', None)
 
     return {
         "from": fr,
@@ -52,6 +61,8 @@ def get_message(msg):
         "cc": cc,
         "url": url,
         "date": date,
+        "message_id": message_id,
+        "in_reply_to": in_reply_to,
         "raw": msg.as_string()
     }
 

@@ -1,0 +1,131 @@
+<html>
+    <head>
+        <title>httpRange-14 discussion</title>
+        <style>
+            header {
+                text-align: center;
+            }
+
+            #chart {
+                border: 2px solid #cccccc;
+                width: 1000px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            #about {
+                width: 1000px; 
+                margin-left: auto;
+                margin-right: auto;
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+
+            .node text {
+                pointer-events: none;
+                font: 10px sans-serif;
+            }
+
+        </style>
+        <link rel="alternate" href="emails.rdf" type="application/rdf+xml"></link>
+        <link rel="alternate" href="emails.ttl" type="text/turtle"></link>
+        <script src="http://d3js.org/d3.v2.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+
+        <script>
+            $(document).ready(init);
+
+            function init() {
+                var height = 1000;
+                var width = 1000;
+
+                var color = d3.scale.category10();
+
+                var force = d3.layout.force()
+                    //.friction(.9)
+                    //.charge(-80)
+                    .charge(-10)
+                    .linkDistance(2)
+                    .size([width, height]);
+
+                var svg = d3.select("#chart").append("svg")
+                    .attr("width", width)
+                    .attr("height", height)
+                
+                d3.json("/rage14/emails.json", function(json) {
+                    force
+                        .nodes(json.nodes)
+                        .links(json.links)
+                        .start();
+
+                    var link = svg.selectAll("line.link")
+                        .data(json.links)
+                        .enter().append("line")
+                        .attr("class", "link")
+                        .style("stroke", "#999")
+                        .style("stroke-opacity", .8)
+                        .style("stroke-width", function(d) {return 0.05;});
+
+                    var node = svg.selectAll(".node")
+                        .data(json.nodes)
+                      .enter().append("circle")
+                        .attr("class", "node")
+                        //.attr("r", function(d) {return 5 + .08 * d.sent})
+                        .attr("r", 3)
+                        .style("fill", function(d) {
+                            if (! d.replyTo) return "red";
+                            return "#777";
+                        })
+                        .call(force.drag)
+                        .on("mouseover", function() {force.stop();})
+                        .on("mouseout", function() {force.start();});
+
+                    node.append("title")
+                        //.text(function(d) {return d.name + " (sent " +  d.sent + " emails)";});
+                        .text(function(d) {return d.subject + " (from " +  d.from + ")";});
+                    
+                    force.on("tick", function() {
+                        link.attr("x1", function(d) {return d.source.x})
+                            .attr("y1", function(d) {return d.source.y})
+                            .attr("x2", function(d) {return d.target.x})
+                            .attr("y2", function(d) {return d.target.y});
+
+                        node.attr("cx", function(d) {return d.x;})
+                            .attr("cy", function(d) {return d.y;})
+                    });
+                    
+                });
+            }
+        </script>
+    </head>
+    <body>
+        <header><h1>httpRange-14 discussion</h1></header>
+        <a href="http://github.com/edsu/rage14"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub" /></a> 
+        <div id="about">
+            <p>
+            Below is visualization of the email discussion threads around the 
+            topic of the infamous (in some circles) <a href="http://www.w3.org/2001/tag/group/track/issues/14">httpRange-14</a> decision
+            that appeared on the following w3c discussion 
+            lists: public-awwsw, public-lod, public-rdf-wg, 
+            public-swbp-wg, public-vocabs, semantic-web, 
+            www-tag, public-swd-wg, public-sparql-dev. Each node is an
+            email (hover over it to see the subject and author), and each edge 
+            indicates a reply to another email. Nodes colored red are the
+            emails that originated a particular thread. If you want to see 
+            the data behind the graph checkout the 
+            <a href="emails.ttl">RDF</a> or the <a
+                href="emails.json">JSON</a> that drives the <a
+                href="http://d3js.org">D3</a> visualization.
+            </p>
+
+            <p>
+            There is a similar visualization of the <a
+                href="people.html">people</a> who have 
+            corresponded with each other.
+            </p>
+
+
+        </div>
+        <div id="chart"></div>
+    </body>
+</html>

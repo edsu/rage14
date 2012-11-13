@@ -1,0 +1,6 @@
+RewriteEngine On
+RewriteBase /rage14/
+
+RewriteRule ^$ emails/ [R=302]
+RewriteRule ^people/$ people.html [L]
+RewriteRule ^emails/$ emails.html [L]

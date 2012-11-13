@@ -7,13 +7,13 @@
 
             #chart {
                 border: 2px solid #cccccc;
-                width: 800px;
+                width: 1000px;
                 margin-left: auto;
                 margin-right: auto;
             }
 
             #about {
-                width: 70%;
+                width: 1000;
                 margin-left: auto;
                 margin-right: auto;
                 margin-top: 10px;
@@ -30,21 +30,21 @@
             $(document).ready(init);
 
             function init() {
-                var height = 700;
-                var width = 800;
+                var height = 1000;
+                var width = 1000;
 
                 var color = d3.scale.category10();
 
                 var force = d3.layout.force()
-                    .charge(-60)
-                    .linkDistance(200)
+                    .charge(-50)
+                    .linkDistance(300)
                     .size([width, height]);
 
                 var svg = d3.select("#chart").append("svg")
                     .attr("width", width)
                     .attr("height", height)
                 
-                d3.json("d3.json", function(json) {
+                d3.json("/rage14/people.json", function(json) {
                     force
                         .nodes(json.nodes)
                         .links(json.links)
@@ -61,7 +61,7 @@
                         .data(json.nodes)
                         .enter().append("circle")
                         .attr("class", "node")
-                        .attr("r", function(d) {return 5 + .035 * d.size})
+                        .attr("r", function(d) {return 5 + .035 * d.sent})
                         .style("border", "thin solid black")
                         .style("fill", function(d) {
                             if (d.name.match(/w3.org/)) return "#22E";
@@ -87,9 +87,10 @@
         </script>
     </head>
     <body>
-        <header><h1>httpRange-14 discussions</h1></header>
+        <header><h1>httpRange-14 discussion</h1></header>
         <a href="http://github.com/edsu/rage14"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub" /></a> 
         <div id="about">
+            <p>
             Below is visualization of the email discussion around the 
             topic of the infamous (in some circles) <a href="http://www.w3.org/2001/tag/group/track/issues/14">httpRange-14</a> decision
             that appeared on the following w3c discussion 
@@ -101,8 +102,14 @@
             from the w3c. If you want to see the 
             data that drives the app checkout the 
             <a href="emails.ttl">RDF serialization</a> or the <a
-                href="d3.json">JSON</a> that drives the <a
+                href="people.json">JSON</a> that drives the <a
                 href="http://d3js.org">D3</a> visualization.
+            </p>
+            <p>
+            You may also be interested in a 
+            <a href="emails.html">discussion thread view </a>where nodes 
+            are emails, and edges are replies.
+            </p>
 
         </div>
         <div id="chart"></div>

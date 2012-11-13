@@ -14,48 +14,84 @@ def scrub(email):
     return email.replace("mailto:", "").lower()
 
 def is_list(email):
-    # ignore the mailing list address
     e = email.split("@")[0]
     return e in mboxes.lists
 
-nodes = set()
-edges = []
-values = {}
-sizes = {}
+# create graph of people who have corresponded with each other
+
+people = set()
+correspondence = []
+senders = {} 
 
 for email, from_email in g.subject_objects(nmo["from"]):
     from_email = scrub(from_email)
-    nodes.add(from_email)
-    sizes[from_email] = sizes.get(from_email, 0) + 1
+    people.add(from_email)
+    senders[from_email] = senders.get(from_email, 0) + 1
 
     for to_email in g.objects(email, nmo.to):
         to_email = scrub(to_email)
         if is_list(to_email): continue
-        sizes[to_email] = sizes.get(to_email, 0) + 1
-        nodes.add(to_email)
-        edges.append((from_email, to_email))
+        people.add(to_email)
+        correspondence.append((from_email, to_email))
 
     for cc_email in g.objects(email, nmo.to):
         cc_email = scrub(cc_email)
         if is_list(cc_email): continue
-        sizes[cc_email] = sizes.get(cc_email, 0) + 1
-        nodes.add(cc_email)
-        edges.append((from_email, cc_email))
+        people.add(cc_email)
+        correspondence.append((from_email, cc_email))
 
-# rewrite edges using node index
-nodes = list(nodes)
-nodes.sort()
+people = list(people)
+people.sort()
+people = [{"name": v, "sent": senders.get(v, 0)} for v in people]
+people = filter(lambda p: p["sent"] != 0, people)
+people_ids = [p["name"] for p in people]
 
 links = []
-values = {}
-for a, b in edges:
-    links.append({
-        "source": nodes.index(a),
-        "target": nodes.index(b),
-    })
+for a, b in correspondence:
+    if a in people_ids and b in people_ids:
+        links.append({
+            "source": people_ids.index(a),
+            "target": people_ids.index(b),
+        })
 
-nodes = [{"name": v, "size": sizes[v]} for v in nodes]
+d3 = {"nodes": people, "links": links} 
+fh = open("people.json", "w").write(json.dumps(d3, indent=2))
 
-# write the data out as javascript suitable for loading
-d3 = {"nodes": nodes, "links": links} 
-fh = open("d3.json", "w").write(json.dumps(d3, indent=2))
+
+# create a graph of email discussions, where nodes are 
+# email messages and edges are replies
+
+emails = set()
+replies = []
+for reply, orig in g.subject_objects(nmo.inReplyTo):
+    emails.add(reply)
+    emails.add(orig)
+    replies.append((reply, orig))
+
+emails = list(emails)
+emails.sort()
+email_nodes = []
+for email in emails:
+    f = g.value(email, nmo["from"], None)
+    s = g.value(email, nmo.messageSubject, None)
+    r = g.value(email, nmo.inReplyTo, None)
+    if f and s:
+        f = f.replace("mailto:", "")
+        email_nodes.append({
+            "subject": s, 
+            "from": f,
+            "url": email,
+            "replyTo": r
+        })
+
+emails = [e["url"] for e in email_nodes]
+links = []
+for a, b in replies:
+    if a in emails and b in emails:
+        links.append({
+            "source": emails.index(a),
+            "target": emails.index(b)
+        })
+
+d3 = {"nodes": email_nodes, "links": links}
+fh = open("emails.json", "w").write(json.dumps(d3, indent=2))
