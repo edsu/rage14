@@ -62,9 +62,8 @@
                         .data(json.links)
                         .enter().append("line")
                         .attr("class", "link")
-                        .style("stroke", "#999")
-                        .style("stroke-opacity", .8)
-                        .style("stroke-width", function(d) {return 0.05;});
+                        .style("stroke", "#111")
+                        .style("stroke-width", .1);
 
                     var node = svg.selectAll(".node")
                         .data(json.nodes)
@@ -120,7 +119,7 @@
 
             <p>
             There is a similar visualization of the <a
-                href="people.html">people</a> who have 
+                href="/rage14/people.html">people</a> who have 
             corresponded with each other.
             </p>
 
