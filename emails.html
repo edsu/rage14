@@ -27,8 +27,8 @@
             }
 
         </style>
-        <link rel="alternate" href="emails.rdf" type="application/rdf+xml"></link>
-        <link rel="alternate" href="emails.ttl" type="text/turtle"></link>
+        <link rel="alternate" href="/rage14/emails.rdf" type="application/rdf+xml"></link>
+        <link rel="alternate" href="/rage14/emails.ttl" type="text/turtle"></link>
         <script src="http://d3js.org/d3.v2.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 
@@ -63,7 +63,7 @@
                         .enter().append("line")
                         .attr("class", "link")
                         .style("stroke", "#111")
-                        .style("stroke-width", .1);
+                        .style("stroke-width", .4);
 
                     var node = svg.selectAll(".node")
                         .data(json.nodes)
@@ -120,7 +120,10 @@
             <p>
             There is a similar visualization of the <a
                 href="/rage14/people/">people</a> who have 
-            corresponded with each other.
+            corresponded with each other, as well as a 
+            detailed view of a 
+            <a href="/rage14/proposal/">particularly long thread</a> 
+            that is evident in the graph below.
             </p>
 
 

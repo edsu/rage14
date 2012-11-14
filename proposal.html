@@ -1,5 +1,6 @@
 <html>
     <head>
+        <title>httpRange-14 discussion</title>
         <style>
             header {
                 text-align: center;
@@ -13,11 +14,16 @@
             }
 
             #about {
-                width: 1000;
+                width: 1000px; 
                 margin-left: auto;
                 margin-right: auto;
                 margin-top: 10px;
                 margin-bottom: 10px;
+            }
+
+            .node text {
+                pointer-events: none;
+                font: 10px sans-serif;
             }
 
         </style>
@@ -32,19 +38,31 @@
             function init() {
                 var height = 1000;
                 var width = 1000;
-
-                var color = d3.scale.category10();
+                var color = d3.scale.category20c();
+                var pallete = [
+                  "#3182bd", "#6baed6", "#9ecae1", "#c6dbef",
+                  "#e6550d", "#fd8d3c", "#fdae6b", "#fdd0a2",
+                  "#31a354", "#74c476", "#a1d99b", "#c7e9c0",
+                  "#756bb1", "#9e9ac8", "#bcbddc", "#dadaeb",
+                  "#636363", "#969696", "#bdbdbd", "#d9d9d9",
+                  "#843c39", "#ad494a", "#d6616b", "#e7969c",
+                  "#7b4173", "#a55194", "#ce6dbd", "#de9ed6"
+                ];
+                var color = d3.scale.ordinal().range(pallete);
 
                 var force = d3.layout.force()
-                    .charge(-120)
-                    .linkDistance(250)
+                    //.friction(.9)
+                    //.charge(-80)
+                    .charge(-140)
+                    .linkDistance(30)
                     .size([width, height]);
 
                 var svg = d3.select("#chart").append("svg")
                     .attr("width", width)
                     .attr("height", height)
                 
-                d3.json("/rage14/people.json", function(json) {
+                d3.json("/rage14/proposal.json", function(json) {
+
                     force
                         .nodes(json.nodes)
                         .links(json.links)
@@ -54,25 +72,27 @@
                         .data(json.links)
                         .enter().append("line")
                         .attr("class", "link")
-                        .style("stroke", "#222")
-                        .style("stroke-width", function(d) {return 0.05;});
+                        .style("stroke", "#999")
+                        .style("stroke-width", .9);
 
-                    var node = svg.selectAll("circle.node")
+                    var node = svg.selectAll(".node")
                         .data(json.nodes)
-                        .enter().append("circle")
+                      .enter().append("circle")
                         .attr("class", "node")
-                        .attr("r", function(d) {return 5 + .040 * d.sent})
-                        .style("border", "thin solid black")
-                        .style("fill", function(d) {
-                            if (d.name.match(/w3.org/)) return "#22E";
-                            return "#777";
+                        .attr("r", function(d) {
+                            if (! d.replyTo) return 15;
+                            else return 7;
                         })
+                        .style("fill", function(d) {console.log(d.from); return color(d.from)})
+                        .call(force.drag)
+                        .attr("href", function(d) {d.url})
                         .on("mouseover", function() {force.stop();})
                         .on("mouseout", function() {force.start();})
-                        .call(force.drag);
-
+                        .on("click", function(d) {window.open(d.url, "_new");});
                     node.append("title")
-                        .text(function(d) {return d.name + " (sent " + d.sent + " emails)";}) 
+                        //.text(function(d) {return d.name + " (sent " +  d.sent + " emails)";});
+                        .text(function(d) {return d.subject + " (from " +  d.from + ")";});
+                    
                     force.on("tick", function() {
                         link.attr("x1", function(d) {return d.source.x})
                             .attr("y1", function(d) {return d.source.y})
@@ -82,8 +102,9 @@
                         node.attr("cx", function(d) {return d.x;})
                             .attr("cy", function(d) {return d.y;})
                     });
-
+                    
                 });
+
             }
         </script>
     </head>
@@ -92,23 +113,31 @@
         <a href="http://github.com/edsu/rage14"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub" /></a> 
         <div id="about">
             <p>
-            Below is visualization of the email discussion around the 
-            topic of the infamous (in some circles) <a href="http://www.w3.org/2001/tag/group/track/issues/14">httpRange-14</a> decision
-            that appeared on the following w3c discussion 
-            lists: public-awwsw, public-lod, public-rdf-wg, 
-            public-swbp-wg, public-vocabs, semantic-web, 
-            www-tag, public-swd-wg, public-sparql-dev. Each node is a 
-            person (hover it to see the email address), and edges indicate
-            where there has been correspondence. Blue nodes are people
-            from the w3c. If you want to see the 
-            data that drives the app checkout the 
-            <a href="/rage14/emails.ttl">RDF serialization</a> or the <a
-                href="/rage14/people.json">JSON</a> that drives the <a
-                href="http://d3js.org">D3</a> visualization.
+            Below is a visualization of an email discussion thread
+            that started March 22, 2012 with the subject;
+            <a
+                href="http://lists.w3.org/Archives/Public/public-lod/2012Mar/0115.html">Change
+                Proposal for HttpRange-14</a>. Nodes are colored to
+            represent the author of the email, and when clicked will bring
+            up the email in a separate window. The larger blue
+            node represents the email from Jeni Tennison that 
+            started the thread.  This detailed view was 
+            selected out of a 
+            <a href="/rage14/emails/">larger view of all emails</a> 
+            on the topic of httpRange-14, to provide some 
+            additional detail.
             </p>
+
             <p>
-            There is also a similar thread-oriented view of the <a href="/rage14/emails/">email discussions</a>.
+            If you want to see the data behind the graph checkout the 
+            <a href="/rage14/emails.ttl">RDF</a> that was extracted
+            from the public-lod mbox files.
             </p>
+
+
+
+            </p>
+
 
         </div>
         <div id="chart"></div>

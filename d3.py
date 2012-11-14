@@ -71,18 +71,29 @@ for reply, orig in g.subject_objects(nmo.inReplyTo):
 emails = list(emails)
 emails.sort()
 email_nodes = []
+jeni = []
+jeni_seen = set()
 for email in emails:
     f = g.value(email, nmo["from"], None)
     s = g.value(email, nmo.messageSubject, None)
     r = g.value(email, nmo.inReplyTo, None)
+
+        
     if f and s:
         f = f.replace("mailto:", "")
-        email_nodes.append({
+        e = {
             "subject": s, 
             "from": f,
             "url": email,
             "replyTo": r
-        })
+        }
+        if "Change Proposal for HttpRange-14" in str(s) or r in jeni_seen:
+            if not r in jeni_seen:
+                print r
+            jeni_seen.add(email)
+            jeni.append(e)
+
+        email_nodes.append(e);
 
 emails = [e["url"] for e in email_nodes]
 links = []
@@ -95,3 +106,16 @@ for a, b in replies:
 
 d3 = {"nodes": email_nodes, "links": links}
 fh = open("emails.json", "w").write(json.dumps(d3, indent=2))
+
+# jeni's thread
+emails = [e["url"] for e in jeni]
+links = []
+for a, b in replies:
+    if a in emails and b in emails:
+        links.append({
+            "source": emails.index(a),
+            "target": emails.index(b)
+        })
+
+d3 = {"nodes": jeni, "links": links}
+fh = open("proposal.json", "w").write(json.dumps(d3, indent=2))
