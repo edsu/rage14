@@ -21,8 +21,8 @@
             }
 
         </style>
-        <link rel="alternate" href="/rage14/emails.rdf" type="application/rdf+xml"></link>
-        <link rel="alternate" href="/rage14/emails.ttl" type="text/turtle"></link>
+        <link rel="alternate" href="emails.rdf" type="application/rdf+xml"></link>
+        <link rel="alternate" href="emails.ttl" type="text/turtle"></link>
         <script src="http://d3js.org/d3.v2.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 
@@ -44,7 +44,7 @@
                     .attr("width", width)
                     .attr("height", height)
                 
-                d3.json("/rage14/people.json", function(json) {
+                d3.json("people.json", function(json) {
                     force
                         .nodes(json.nodes)
                         .links(json.links)
@@ -102,12 +102,12 @@
             where there has been correspondence. Blue nodes are people
             from the w3c. If you want to see the 
             data that drives the app checkout the 
-            <a href="/rage14/emails.ttl">RDF serialization</a> or the <a
-                href="/rage14/people.json">JSON</a> that drives the <a
+            <a href="emails.ttl">RDF serialization</a> or the <a
+                href="people.json">JSON</a> that drives the <a
                 href="http://d3js.org">D3</a> visualization.
             </p>
             <p>
-            There is also a similar thread-oriented view of the <a href="/rage14/emails/">email discussions</a>.
+            There is also a similar thread-oriented view of the <a href="emails/">email discussions</a>.
             </p>
 
         </div>

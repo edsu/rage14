@@ -27,8 +27,8 @@
             }
 
         </style>
-        <link rel="alternate" href="/rage14/emails.rdf" type="application/rdf+xml"></link>
-        <link rel="alternate" href="/rage14/emails.ttl" type="text/turtle"></link>
+        <link rel="alternate" href="emails.rdf" type="application/rdf+xml"></link>
+        <link rel="alternate" href="emails.ttl" type="text/turtle"></link>
         <script src="http://d3js.org/d3.v2.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 
@@ -52,7 +52,7 @@
                     .attr("width", width)
                     .attr("height", height)
                 
-                d3.json("/rage14/emails.json", function(json) {
+                d3.json("emails.json", function(json) {
                     force
                         .nodes(json.nodes)
                         .links(json.links)
@@ -112,17 +112,17 @@
             indicates a reply to another email. Nodes colored red are the
             emails that originated a particular thread. If you want to see 
             the data behind the graph checkout the 
-            <a href="/rage14/emails.ttl">RDF</a> or the <a
-                href="/rage14/emails.json">JSON</a> that drives the <a
+            <a href="emails.ttl">RDF</a> or the <a
+                href="emails.json">JSON</a> that drives the <a
                 href="http://d3js.org">D3</a> visualization.
             </p>
 
             <p>
             There is a similar visualization of the <a
-                href="/rage14/people/">people</a> who have 
+                href="people/">people</a> who have 
             corresponded with each other, as well as a 
             detailed view of a 
-            <a href="/rage14/proposal/">particularly long thread</a> 
+            <a href="proposal/">particularly long thread</a> 
             that is evident in the graph below.
             </p>
 
